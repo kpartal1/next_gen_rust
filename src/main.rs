@@ -1,5 +1,6 @@
 mod buffer;
 mod color;
+mod linalg;
 
 use buffer::Buffer;
 use color::Color;
@@ -8,8 +9,6 @@ use rand::Rng;
 
 const WIDTH: usize = 640;
 const HEIGHT: usize = 360;
-
-// FIXME TODO remove rand crate before finishing using it for testing
 
 fn main() {
     let mut buffer = Buffer::new(WIDTH, HEIGHT);
@@ -29,14 +28,10 @@ fn main() {
 
     // Limit to max ~60 fps update rate
     window.limit_update_rate(Some(std::time::Duration::from_micros(16600)));
-    // window.limit_update_rate(None);
 
     let mut rng = rand::thread_rng();
     while window.is_open() && !window.is_key_down(Key::Escape) {
         buffer.clear();
-        // for i in buffer.iter_mut() {
-        //     *i = Color::RED;
-        // }
         buffer.set_color(Color::random());
         let x1 = rng.gen_range(0..WIDTH);
         let y1 = rng.gen_range(0..HEIGHT);
