@@ -54,6 +54,14 @@ impl Buffer {
         }
     }
 
+    pub fn size(&self) -> (usize, usize) {
+        (self.width, self.height)
+    }
+
+    pub fn color(&self) -> u32 {
+        self.color
+    }
+
     pub fn set_color(&mut self, color: u32) {
         self.color = color;
     }

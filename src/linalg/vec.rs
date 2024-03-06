@@ -32,6 +32,10 @@ impl Vec4 {
         Vec4 { x, y, z, w }
     }
 
+    pub fn xy(&self) -> (f32, f32) {
+        (self.x, self.y)
+    }
+
     pub fn normalize(&self) -> Self {
         let m = self.magnitude();
         let x = self.x / m;
@@ -60,8 +64,23 @@ impl Vec4 {
         Vec4 { x, y, z, w: self.w }
     }
 
+    pub fn to(&self, rhs: &Self) -> Self {
+        self - rhs
+    }
+
+    pub fn dist(&self, rhs: &Self) -> f32 {
+        let vw = self - rhs;
+        vw.magnitude()
+    }
+
     pub fn coefs(&self) -> [f32; 4] {
         [self.x, self.y, self.z, self.w]
+    }
+}
+
+impl Default for Vec4 {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -87,6 +106,17 @@ impl Sub for Vec4 {
     }
 }
 
+impl Sub for &Vec4 {
+    type Output = Vec4;
+    fn sub(self, rhs: Self) -> Self::Output {
+        let x = self.x - rhs.x;
+        let y = self.y - rhs.y;
+        let z = self.z - rhs.z;
+        let w = self.w - rhs.w;
+        Vec4 { x, y, z, w }
+    }
+}
+
 impl Mul<f32> for Vec4 {
     type Output = Self;
     fn mul(self, rhs: f32) -> Self::Output {
@@ -98,13 +128,13 @@ impl Mul<f32> for Vec4 {
     }
 }
 
-impl Mul<u32> for Vec4 {
-    type Output = Self;
-    fn mul(self, rhs: u32) -> Self::Output {
-        let x = rhs as f32 * self.x;
-        let y = rhs as f32 * self.y;
-        let z = rhs as f32 * self.z;
-        let w = rhs as f32 * self.w;
+impl Mul<Vec4> for f32 {
+    type Output = Vec4;
+    fn mul(self, rhs: Vec4) -> Self::Output {
+        let x = self * rhs.x;
+        let y = self * rhs.y;
+        let z = self * rhs.z;
+        let w = self * rhs.w;
         Vec4 { x, y, z, w }
     }
 }
