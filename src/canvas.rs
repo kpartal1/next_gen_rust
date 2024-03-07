@@ -8,24 +8,15 @@ pub struct Canvas {
     buf: Buffer,
 }
 
-impl Deref for Canvas {
-    type Target = [u32];
-    fn deref(&self) -> &Self::Target {
-        self.buf.as_slice()
-    }
-}
-
-impl DerefMut for Canvas {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        self.buf.as_mut_slice()
-    }
-}
-
 impl Canvas {
     pub fn new(width: usize, height: usize) -> Self {
         Canvas {
             buf: Buffer::new(width, height),
         }
+    }
+
+    pub fn buffer(&self) -> &[u32] {
+        &self.buf
     }
 
     pub fn clear(&mut self) {

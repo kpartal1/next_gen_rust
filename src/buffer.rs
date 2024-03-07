@@ -10,7 +10,7 @@ pub struct Buffer {
 }
 
 impl Deref for Buffer {
-    type Target = Vec<u32>;
+    type Target = [u32];
 
     fn deref(&self) -> &Self::Target {
         &self.buf
@@ -71,8 +71,8 @@ impl Buffer {
     }
 
     pub fn fill(&mut self) {
-        let col = self.color;
-        self.iter_mut().for_each(|x| *x = col);
+        let color = self.color;
+        self.iter_mut().for_each(|x| *x = color);
     }
 
     pub fn pixel(&mut self, index: (usize, usize)) {
