@@ -38,13 +38,9 @@ fn main() {
     // let center = Vec4::new();
     // let up = Vec4::from(0., 1., 0., 0.);
     // let view = Mat4x4::look_at(eye, center, up);
-    let projection = Mat4x4::perspective(45., WIDTH as f32 / HEIGHT as f32, 0.1, 100.);
-    println!("{:?}", projection.rows());
-    println!("{:?}", projection.columns());
+    // let projection = Mat4x4::perspective(45., WIDTH as f32 / HEIGHT as f32, 0.1, 100.);
     // let projection = Mat4x4::frustum(-1., 1., -1., 1., 1., 100.);
     // let mvp = projection * view * model;
-    let v = Vec2::new(1., 1.);
-    let m = v.magnitude();
 
     let mut rng = rand::thread_rng();
     while window.is_open() && !window.is_key_down(Key::Escape) {
