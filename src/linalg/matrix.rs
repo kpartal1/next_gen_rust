@@ -8,7 +8,7 @@ use std::ops::{Add, Div, Mul, Sub};
 use super::vec3::Vec3;
 use super::vec4::Vec4;
 
-#[derive(Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Mat4x4<T> {
     buf: [T; 16],
 }
@@ -191,41 +191,15 @@ impl<T: Clone + Num> Div<T> for Mat4x4<T> {
     }
 }
 
-impl<T: Clone + Num> Mul<Vec4<T>> for Mat4x4<T>
-where
-    for<'a> &'a T: Mul<&'a T, Output = T>,
-{
+impl<T: Clone + Num> Mul<Vec4<T>> for Mat4x4<T> {
     type Output = Vec4<T>;
     fn mul(self, rhs: Vec4<T>) -> Self::Output {
         let mut new_coefs = [T::zero(), T::zero(), T::zero(), T::zero()];
-        let mut count = 0;
-        for i in 0..4 {
+        for (count, i) in (0..16).step_by(4).enumerate() {
             new_coefs[count] = self.buf[i].clone() * rhs.x()
                 + self.buf[i + 1].clone() * rhs.y()
                 + self.buf[i + 2].clone() * rhs.z()
                 + self.buf[i + 3].clone() * rhs.w();
-            count += 1;
-        }
-        Vec4::new(
-            new_coefs[0].clone(),
-            new_coefs[1].clone(),
-            new_coefs[2].clone(),
-            new_coefs[3].clone(),
-        )
-    }
-}
-
-impl<T: Clone + Num> Mul<Vec4<T>> for &Mat4x4<T> {
-    type Output = Vec4<T>;
-    fn mul(self, rhs: Vec4<T>) -> Self::Output {
-        let mut new_coefs = [T::zero(), T::zero(), T::zero(), T::zero()];
-        let mut count = 0;
-        for i in 0..4 {
-            new_coefs[count] = self.buf[i].clone() * rhs.x()
-                + self.buf[i + 1].clone() * rhs.y()
-                + self.buf[i + 2].clone() * rhs.z()
-                + self.buf[i + 3].clone() * rhs.w();
-            count += 1;
         }
         Vec4::new(
             new_coefs[0].clone(),
@@ -242,12 +216,59 @@ impl<T: Clone + Num> Mul for Mat4x4<T> {
         let mut buf = self.rows();
         for (i, row) in self.buf.chunks(4).enumerate() {
             for (j, col) in rhs.columns().chunks(4).enumerate() {
-                buf[j * 4 + i] = row
+                buf[i * 4 + j] = row
                     .iter()
                     .zip(col)
                     .fold(T::zero(), |acc, (a, b)| acc + a.clone() * b.clone());
             }
         }
         Mat4x4 { buf }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::linalg::vec4::Vec4;
+
+    use super::Mat4x4;
+
+    #[test]
+    fn matadd() {
+        let buf: [u32; 16] = (1..=16).collect::<Vec<_>>().try_into().unwrap();
+        let m1 = Mat4x4::new(buf);
+        let m2 = m1.clone();
+        let sol: [u32; 16] = (1..=16)
+            .map(|x| x * 2)
+            .collect::<Vec<_>>()
+            .try_into()
+            .unwrap();
+        assert_eq!(m1 + m2, Mat4x4::new(sol));
+    }
+
+    #[test]
+    fn matsub() {
+        let buf: [u32; 16] = (1..=16).collect::<Vec<_>>().try_into().unwrap();
+        let m1 = Mat4x4::new(buf);
+        let m2 = m1.clone();
+        assert_eq!(m1 - m2, Mat4x4::default());
+    }
+
+    #[test]
+    fn matmul() {
+        let buf: [u32; 16] = (1..=16).collect::<Vec<_>>().try_into().unwrap();
+        let m1 = Mat4x4::new(buf);
+        let m2 = m1.clone();
+        let sol: [u32; 16] = [
+            90, 100, 110, 120, 202, 228, 254, 280, 314, 356, 398, 440, 426, 484, 542, 600,
+        ];
+        assert_eq!(m1 * m2, Mat4x4::new(sol));
+    }
+
+    #[test]
+    fn vecmatmul() {
+        let buf: [u32; 16] = (1..=16).collect::<Vec<_>>().try_into().unwrap();
+        let m1 = Mat4x4::new(buf);
+        let v1 = Vec4::new(3, 5, 1, 4);
+        assert_eq!(m1 * v1, Vec4::new(32, 84, 136, 188));
     }
 }
