@@ -57,4 +57,12 @@ impl Canvas {
             self.point_to_pixel(p3),
         )
     }
+
+    pub fn poly(&mut self, points: Vec<(f32, f32)>) {
+        self.line(points[0], points[points.len() - 1]);
+        points.into_iter().reduce(|p1, p2| {
+            self.line(p1, p2);
+            p2
+        });
+    }
 }

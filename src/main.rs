@@ -53,7 +53,7 @@ fn main() {
         // canvas.set_color(Color::random());
         // mvp.rotate_y(angle);
         // mvp.rotate_x(angle);
-        mvp.scale(0.975, 1.025, 1.);
+        // mvp.scale(0.975, 1.025, 1.);
         mvp.rotate_z(angle);
         // let x1 = rng.gen_range(-1f32..1. + f32::EPSILON);
         // let y1 = rng.gen_range(-1f32..1. + f32::EPSILON);
@@ -61,10 +61,11 @@ fn main() {
         // let y2 = rng.gen_range(-1f32..1. + f32::EPSILON);
         // let x3 = rng.gen_range(-1f32..1. + f32::EPSILON);
         // let y3 = rng.gen_range(-1f32..1. + f32::EPSILON);
-        let (x1, y1) = (mvp.clone() * Vec4::new(0., 1., 0., 1.)).xy();
-        let (x2, y2) = (mvp.clone() * Vec4::new(-1., -1., 0., 1.)).xy();
-        let (x3, y3) = (mvp.clone() * Vec4::new(1., -1., 0., 1.)).xy();
-        canvas.tri((x1, y1), (x2, y2), (x3, y3));
+        let p1 @ (x1, y1) = (mvp.clone() * Vec4::new(0., 1., 0., 1.)).xy();
+        let p2 @ (x2, y2) = (mvp.clone() * Vec4::new(-1., -1., 0., 1.)).xy();
+        let p3 @ (x3, y3) = (mvp.clone() * Vec4::new(1., -1., 0., 1.)).xy();
+        let p4 @ (x4, y4) = (mvp.clone() * Vec4::new(1., 1., -1., 0.)).xy();
+        canvas.poly(vec![p1, p2, p3, p4]);
 
         window
             .update_with_buffer(canvas.buffer(), WIDTH, HEIGHT)

@@ -1,7 +1,7 @@
 #![allow(unused)]
 
 use num::{Float, Num};
-use std::ops::{Add, Div, Mul, MulAssign, Sub};
+use std::ops::{Add, Div, DivAssign, Mul, MulAssign, Sub};
 
 use super::vec3::Vec3;
 use super::vec4::Vec4;
@@ -64,7 +64,7 @@ impl<T: Clone + Num> Mat4x4<T> {
         let c3 = Vec4::new(zero.clone(), zero.clone(), one.clone(), zero.clone());
         let c4 = Vec4::new(tx, ty, tz, one.clone());
         let trans = Mat4x4 { c1, c2, c3, c4 };
-        *self *= trans;
+        *self = self.clone() * trans;
     }
 
     pub fn scale(&mut self, sx: T, sy: T, sz: T) {
@@ -75,7 +75,7 @@ impl<T: Clone + Num> Mat4x4<T> {
         let c3 = Vec4::new(zero.clone(), zero.clone(), sz, zero.clone());
         let c4 = Vec4::new(zero.clone(), zero.clone(), zero.clone(), one.clone());
         let scale = Mat4x4 { c1, c2, c3, c4 };
-        *self *= scale;
+        *self = self.clone() * scale;
     }
 }
 
@@ -83,34 +83,34 @@ impl<T: Float> Mat4x4<T> {
     pub fn rotate_x(&mut self, t: T) {
         let zero = T::zero();
         let one = T::one();
-        let c1 = Vec4::new(one.clone(), zero.clone(), zero.clone(), zero.clone());
-        let c2 = Vec4::new(zero.clone(), t.cos(), -t.sin(), zero.clone());
-        let c3 = Vec4::new(zero.clone(), t.sin(), t.cos(), zero.clone());
-        let c4 = Vec4::new(zero.clone(), zero.clone(), zero.clone(), one.clone());
+        let c1 = Vec4::new(one, zero, zero, zero);
+        let c2 = Vec4::new(zero, t.cos(), -t.sin(), zero);
+        let c3 = Vec4::new(zero, t.sin(), t.cos(), zero);
+        let c4 = Vec4::new(zero, zero, zero, one);
         let rot = Mat4x4 { c1, c2, c3, c4 };
-        *self *= rot;
+        *self = self.clone() * rot;
     }
 
     pub fn rotate_y(&mut self, t: T) {
         let zero = T::zero();
         let one = T::one();
-        let c1 = Vec4::new(t.cos(), zero.clone(), t.sin(), zero.clone());
-        let c2 = Vec4::new(zero.clone(), one.clone(), zero.clone(), zero.clone());
-        let c3 = Vec4::new(-t.sin(), zero.clone(), t.cos(), zero.clone());
-        let c4 = Vec4::new(zero.clone(), zero.clone(), zero.clone(), one.clone());
+        let c1 = Vec4::new(t.cos(), zero, t.sin(), zero);
+        let c2 = Vec4::new(zero, one, zero, zero);
+        let c3 = Vec4::new(-t.sin(), zero, t.cos(), zero);
+        let c4 = Vec4::new(zero, zero, zero, one);
         let rot = Mat4x4 { c1, c2, c3, c4 };
-        *self *= rot;
+        *self = self.clone() * rot;
     }
 
     pub fn rotate_z(&mut self, t: T) {
         let zero = T::zero();
         let one = T::one();
-        let c1 = Vec4::new(t.cos(), t.sin(), zero.clone(), zero.clone());
-        let c2 = Vec4::new(-t.sin(), t.cos(), zero.clone(), zero.clone());
-        let c3 = Vec4::new(zero.clone(), zero.clone(), one.clone(), zero.clone());
-        let c4 = Vec4::new(zero.clone(), zero.clone(), zero.clone(), one.clone());
+        let c1 = Vec4::new(t.cos(), t.sin(), zero, zero);
+        let c2 = Vec4::new(-t.sin(), t.cos(), zero, zero);
+        let c3 = Vec4::new(zero, zero, one, zero);
+        let c4 = Vec4::new(zero, zero, zero, one);
         let rot = Mat4x4 { c1, c2, c3, c4 };
-        *self *= rot;
+        *self = self.clone() * rot;
     }
 
     pub fn frustum(l: T, r: T, b: T, t: T, n: T, f: T) -> Self {
@@ -242,12 +242,6 @@ impl<T: Clone + Num> Mul for Mat4x4<T> {
         let c3 = self.clone() * c3;
         let c4 = self * c4;
         Mat4x4 { c1, c2, c3, c4 }
-    }
-}
-
-impl<T: Clone + Num> MulAssign for Mat4x4<T> {
-    fn mul_assign(&mut self, rhs: Self) {
-        *self = self.clone() * rhs;
     }
 }
 
