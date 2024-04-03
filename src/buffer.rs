@@ -1,16 +1,16 @@
 #![allow(unused)]
-use crate::Color;
+use crate::{linalg::vec2::Vec2, Color};
 use std::ops::{Deref, DerefMut, Index, IndexMut};
 
 pub struct Buffer {
-    buf: Vec<u32>,
+    buf: Vec<Color>,
     width: usize,
     height: usize,
-    color: u32,
+    color: Color,
 }
 
 impl Deref for Buffer {
-    type Target = [u32];
+    type Target = [Color];
 
     fn deref(&self) -> &Self::Target {
         &self.buf
@@ -23,9 +23,9 @@ impl DerefMut for Buffer {
     }
 }
 
-impl Index<(usize, usize)> for Buffer {
-    type Output = u32;
-    fn index(&self, (x, y): (usize, usize)) -> &Self::Output {
+impl Index<Vec2<usize>> for Buffer {
+    type Output = Color;
+    fn index(&self, Vec2 { x, y }: Vec2<usize>) -> &Self::Output {
         assert!(
             x < self.width && y < self.height,
             "({x}, {y}) is out of bounds"
@@ -34,8 +34,8 @@ impl Index<(usize, usize)> for Buffer {
     }
 }
 
-impl IndexMut<(usize, usize)> for Buffer {
-    fn index_mut(&mut self, (x, y): (usize, usize)) -> &mut Self::Output {
+impl IndexMut<Vec2<usize>> for Buffer {
+    fn index_mut(&mut self, Vec2 { x, y }: Vec2<usize>) -> &mut Self::Output {
         assert!(
             x < self.width && y < self.height,
             "({x}, {y}) is out of bounds"
@@ -47,27 +47,35 @@ impl IndexMut<(usize, usize)> for Buffer {
 impl Buffer {
     pub fn new(width: usize, height: usize) -> Self {
         Self {
-            buf: vec![0; width * height],
+            buf: vec![Color::BLACK; width * height],
             width,
             height,
             color: Color::WHITE,
         }
     }
 
+    pub fn width(&self) -> usize {
+        self.width
+    }
+
+    pub fn height(&self) -> usize {
+        self.height
+    }
+
     pub fn size(&self) -> (usize, usize) {
         (self.width, self.height)
     }
 
-    pub fn color(&self) -> u32 {
+    pub fn color(&self) -> Color {
         self.color
     }
 
-    pub fn set_color(&mut self, color: u32) {
+    pub fn set_color(&mut self, color: Color) {
         self.color = color;
     }
 
     pub fn clear(&mut self) {
-        self.iter_mut().for_each(|x| *x = 0);
+        self.iter_mut().for_each(|x| *x = Color::BLACK);
     }
 
     pub fn fill(&mut self) {
@@ -75,11 +83,11 @@ impl Buffer {
         self.iter_mut().for_each(|x| *x = color);
     }
 
-    pub fn pixel(&mut self, index: (usize, usize)) {
+    pub fn pixel(&mut self, index: Vec2<usize>) {
         self[index] = self.color;
     }
 
-    pub fn line(&mut self, (x1, y1): (usize, usize), (x2, y2): (usize, usize)) {
+    pub fn line(&mut self, Vec2 { x: x1, y: y1 }: Vec2<usize>, Vec2 { x: x2, y: y2 }: Vec2<usize>) {
         let (x1, y1, x2, y2) = (x1 as i32, y1 as i32, x2 as i32, y2 as i32);
         let dx = (x2 - x1).abs();
         let sx = if x1 < x2 { 1 } else { -1 };
@@ -88,7 +96,7 @@ impl Buffer {
         let (mut x, mut y) = (x1, y1);
         let mut error = dx + dy;
         loop {
-            self.pixel((x as usize, y as usize));
+            self.pixel(Vec2::new(x as usize, y as usize));
             if x == x2 && y == y2 {
                 break;
             }
@@ -110,7 +118,7 @@ impl Buffer {
         }
     }
 
-    pub fn tri(&mut self, p1: (usize, usize), p2: (usize, usize), p3: (usize, usize)) {
+    pub fn tri(&mut self, p1: Vec2<usize>, p2: Vec2<usize>, p3: Vec2<usize>) {
         self.line(p1, p2);
         self.line(p2, p3);
         self.line(p3, p1);

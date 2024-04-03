@@ -6,9 +6,9 @@ use num::{Float, Num};
 
 #[derive(Clone, Debug)]
 pub struct Vec3<T> {
-    x: T,
-    y: T,
-    z: T,
+    pub x: T,
+    pub y: T,
+    pub z: T,
 }
 
 impl<T> Vec3<T> {
@@ -24,18 +24,6 @@ impl<T: Clone> Vec3<T> {
             y: f.clone(),
             z: f,
         }
-    }
-
-    pub fn x(&self) -> T {
-        self.x.clone()
-    }
-
-    pub fn y(&self) -> T {
-        self.y.clone()
-    }
-
-    pub fn z(&self) -> T {
-        self.z.clone()
     }
 }
 

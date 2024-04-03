@@ -6,7 +6,7 @@ use std::ops::{Add, Div, DivAssign, Mul, MulAssign, Sub};
 use super::vec3::Vec3;
 use super::vec4::Vec4;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, PartialEq)]
 pub struct Mat4x4<T> {
     c1: Vec4<T>,
     c2: Vec4<T>,
@@ -29,7 +29,7 @@ impl<T: Clone + Num> Mat4x4<T> {
         Mat4x4 { c1, c2, c3, c4 }
     }
 
-    pub fn cols(&self) -> [Vec4<T>; 4] {
+    pub fn cols(self) -> [Vec4<T>; 4] {
         [
             self.c1.clone(),
             self.c2.clone(),
@@ -38,11 +38,31 @@ impl<T: Clone + Num> Mat4x4<T> {
         ]
     }
 
-    pub fn rows(&self) -> [Vec4<T>; 4] {
-        let r1 = Vec4::new(self.c1.x(), self.c2.x(), self.c3.x(), self.c4.x());
-        let r2 = Vec4::new(self.c1.y(), self.c2.y(), self.c3.y(), self.c4.y());
-        let r3 = Vec4::new(self.c1.z(), self.c2.z(), self.c3.z(), self.c4.z());
-        let r4 = Vec4::new(self.c1.w(), self.c2.w(), self.c3.w(), self.c4.w());
+    pub fn rows(self) -> [Vec4<T>; 4] {
+        let r1 = Vec4::new(
+            self.c1.x.clone(),
+            self.c2.x.clone(),
+            self.c3.x.clone(),
+            self.c4.x.clone(),
+        );
+        let r2 = Vec4::new(
+            self.c1.y.clone(),
+            self.c2.y.clone(),
+            self.c3.y.clone(),
+            self.c4.y.clone(),
+        );
+        let r3 = Vec4::new(
+            self.c1.z.clone(),
+            self.c2.z.clone(),
+            self.c3.z.clone(),
+            self.c4.z.clone(),
+        );
+        let r4 = Vec4::new(
+            self.c1.w.clone(),
+            self.c2.w.clone(),
+            self.c3.w.clone(),
+            self.c4.w.clone(),
+        );
         [r1, r2, r3, r4]
     }
 
@@ -129,7 +149,6 @@ impl<T: Float> Mat4x4<T> {
         Mat4x4 { c1, c2, c3, c4 }
     }
 
-    // This function might be broken I think, if anyone can fix it I believe in you
     pub fn perspective(fov_y: T, aspect: T, front: T, back: T) -> Self {
         let one = T::one();
         let two = one + one;
@@ -163,9 +182,9 @@ impl<T: Float> Mat4x4<T> {
         let x = up.cross(&z);
         let y = z.cross(&x).normalize();
         let x = x.normalize();
-        let c1 = Vec4::new(x.x(), x.y(), x.z(), -x.dot(&eye));
-        let c2 = Vec4::new(y.x(), y.y(), y.z(), -y.dot(&eye));
-        let c3 = Vec4::new(z.x(), z.y(), z.y(), -z.dot(&eye));
+        let c1 = Vec4::new(x.x, x.y, x.z, -x.dot(&eye));
+        let c2 = Vec4::new(y.x, y.y, y.z, -y.dot(&eye));
+        let c3 = Vec4::new(z.x, z.y, z.y, -z.dot(&eye));
         let c4 = Vec4::new(zero, zero, zero, one);
         Mat4x4 { c1, c2, c3, c4 }
     }
@@ -242,6 +261,17 @@ impl<T: Clone + Num> Mul for Mat4x4<T> {
         let c3 = self.clone() * c3;
         let c4 = self * c4;
         Mat4x4 { c1, c2, c3, c4 }
+    }
+}
+
+impl<T: std::fmt::Debug> std::fmt::Debug for Mat4x4<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        writeln!(
+            f,
+            "|{:?} {:?} {:?} {:?}|\n|{:?} {:?} {:?} {:?}|\n|{:?} {:?} {:?} {:?}|\n|{:?} {:?} {:?} {:?}|",
+            self.c1.x, self.c2.x, self.c3.x, self.c4.x, self.c1.y, self.c2.y, self.c3.y, self.c4.y, self.c1.z, self.c2.z, self.c3.z, self.c4.z, self.c1.w, self.c2.w, self.c3.w, self.c4.w
+        );
+        Ok(())
     }
 }
 

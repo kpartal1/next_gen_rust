@@ -8,10 +8,10 @@ use super::vec3::Vec3;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Vec4<T> {
-    x: T,
-    y: T,
-    z: T,
-    w: T,
+    pub x: T,
+    pub y: T,
+    pub z: T,
+    pub w: T,
 }
 
 impl<T> Vec4<T> {
@@ -28,22 +28,6 @@ impl<T: Clone> Vec4<T> {
             z: f.clone(),
             w: f,
         }
-    }
-
-    pub fn x(&self) -> T {
-        self.x.clone()
-    }
-
-    pub fn y(&self) -> T {
-        self.y.clone()
-    }
-
-    pub fn z(&self) -> T {
-        self.z.clone()
-    }
-
-    pub fn w(&self) -> T {
-        self.w.clone()
     }
 
     pub fn xy(&self) -> (T, T) {
