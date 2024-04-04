@@ -115,4 +115,11 @@ impl Buffer {
         self.line(p2, p3);
         self.line(p3, p1);
     }
+
+    pub fn sqr(&mut self, p1: (usize, usize), p2: (usize, usize), p3: (usize, usize), p4: (usize, usize)) {
+        self.line(p1, p2);
+        self.line(p2, p3);
+        self.line(p3, p4);
+        self.line(p4, p1);
+    }
 }
