@@ -142,7 +142,7 @@ impl<T: Float> Mat4x4<T> {
         let c3 = Vec4::new(
             (r + l) / (r - l),
             (t + b) / (t - b),
-            -one * (f + n) / (f - n),
+            -(f + n) / (f - n),
             -one,
         );
         let c4 = Vec4::new(zero, zero, -(two * f * n) / (f - n), zero);
@@ -152,7 +152,7 @@ impl<T: Float> Mat4x4<T> {
     pub fn perspective(fov_y: T, aspect: T, front: T, back: T) -> Self {
         let one = T::one();
         let two = one + one;
-        let tangent = one / (fov_y / two).to_radians().tan();
+        let tangent = one / (fov_y / two).to_radians().tan() * front;
         let height = front * tangent;
         let width = height * aspect;
 

@@ -1,8 +1,8 @@
 use minifb::Window;
 
-use crate::buffer::Buffer;
+use crate::canvas::Canvas;
 
 pub struct WireFrame {
     window: Window,
-    buffer: Buffer,
+    buffer: Canvas,
 }
