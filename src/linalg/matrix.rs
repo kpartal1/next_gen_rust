@@ -149,14 +149,15 @@ impl<T: Float> Mat4x4<T> {
         Mat4x4 { c1, c2, c3, c4 }
     }
 
-    pub fn perspective(fov_y: T, aspect: T, front: T, back: T) -> Self {
+    pub fn perspective(fov_y: T, aspect: T, near: T, far: T) -> Self {
         let one = T::one();
         let two = one + one;
-        let tangent = one / (fov_y / two).to_radians().tan() * front;
-        let height = front * tangent;
-        let width = height * aspect;
+        let t = near * T::tan((fov_y / two).to_radians());
+        let b = -t;
+        let r = aspect * t;
+        let l = -r;
 
-        Self::frustum(-width, width, -height, height, front, back)
+        Self::frustum(l, r, b, t, near, far)
     }
 
     pub fn ortho(l: T, r: T, b: T, t: T, n: T, f: T) -> Self {

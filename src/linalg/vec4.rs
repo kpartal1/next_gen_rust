@@ -72,6 +72,14 @@ impl<T: Float> Vec4<T> {
     }
 }
 
+impl<T: Num> From<[T; 3]> for Vec4<T> {
+    fn from(values: [T; 3]) -> Self {
+        let [x, y, z] = values;
+        let one = T::one();
+        Vec4::new(x, y, z, one)
+    }
+}
+
 impl<T: Default> Default for Vec4<T> {
     fn default() -> Self {
         Self::new(

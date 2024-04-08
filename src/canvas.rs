@@ -210,7 +210,7 @@ impl Canvas {
         x01.append(&mut x12);
         let x012 = x01;
 
-        let m = x012.len() / 2;
+        let m = x012.len() / 2 - 1;
         let (mut x_left, mut x_right);
         if x02[m] < x012[m] {
             x_left = x02;
