@@ -4,7 +4,7 @@ use std::ops::{Add, Mul, Sub};
 
 use num::{Float, Num};
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Clone, Debug)]
 pub struct Vec2<T> {
     pub x: T,
     pub y: T,

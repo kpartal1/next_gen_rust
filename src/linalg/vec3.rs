@@ -66,6 +66,13 @@ impl<T: Float> Vec3<T> {
     }
 }
 
+impl<T: Num> From<[T; 3]> for Vec3<T> {
+    fn from(values: [T; 3]) -> Self {
+        let [x, y, z] = values;
+        Vec3::new(x, y, z)
+    }
+}
+
 impl<T: Default> Default for Vec3<T> {
     fn default() -> Self {
         Self::new(Default::default(), Default::default(), Default::default())

@@ -1,13 +1,18 @@
-use crate::linalg::vec3::Vec3;
+use crate::linalg::{matrix::Mat4x4, vec3::Vec3};
 
-pub struct Camera<T> {
-    eye: Vec3<T>,
-    look: Vec3<T>,
-    up: Vec3<T>,
+#[derive(Debug)]
+pub struct Camera {
+    eye: Vec3<f32>,
+    center: Vec3<f32>,
+    up: Vec3<f32>,
 }
 
-impl<T> Camera<T> {
-    pub fn new(eye: Vec3<T>, look: Vec3<T>, up: Vec3<T>) -> Self {
-        Self { eye, look, up }
+impl Camera {
+    pub fn new(eye: Vec3<f32>, center: Vec3<f32>, up: Vec3<f32>) -> Self {
+        Self { eye, center, up }
+    }
+
+    pub fn look_at(self) -> Mat4x4<f32> {
+        Mat4x4::look_at(self.eye, self.center, self.up)
     }
 }

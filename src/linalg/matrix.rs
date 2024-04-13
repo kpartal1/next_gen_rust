@@ -30,39 +30,14 @@ impl<T: Clone + Num> Mat4x4<T> {
     }
 
     pub fn cols(self) -> [Vec4<T>; 4] {
-        [
-            self.c1.clone(),
-            self.c2.clone(),
-            self.c3.clone(),
-            self.c4.clone(),
-        ]
+        [self.c1, self.c2, self.c3, self.c4]
     }
 
     pub fn rows(self) -> [Vec4<T>; 4] {
-        let r1 = Vec4::new(
-            self.c1.x.clone(),
-            self.c2.x.clone(),
-            self.c3.x.clone(),
-            self.c4.x.clone(),
-        );
-        let r2 = Vec4::new(
-            self.c1.y.clone(),
-            self.c2.y.clone(),
-            self.c3.y.clone(),
-            self.c4.y.clone(),
-        );
-        let r3 = Vec4::new(
-            self.c1.z.clone(),
-            self.c2.z.clone(),
-            self.c3.z.clone(),
-            self.c4.z.clone(),
-        );
-        let r4 = Vec4::new(
-            self.c1.w.clone(),
-            self.c2.w.clone(),
-            self.c3.w.clone(),
-            self.c4.w.clone(),
-        );
+        let r1 = Vec4::new(self.c1.x, self.c2.x, self.c3.x, self.c4.x);
+        let r2 = Vec4::new(self.c1.y, self.c2.y, self.c3.y, self.c4.y);
+        let r3 = Vec4::new(self.c1.z, self.c2.z, self.c3.z, self.c4.z);
+        let r4 = Vec4::new(self.c1.w, self.c2.w, self.c3.w, self.c4.w);
         [r1, r2, r3, r4]
     }
 
@@ -104,8 +79,8 @@ impl<T: Float> Mat4x4<T> {
         let zero = T::zero();
         let one = T::one();
         let c1 = Vec4::new(one, zero, zero, zero);
-        let c2 = Vec4::new(zero, t.cos(), -t.sin(), zero);
-        let c3 = Vec4::new(zero, t.sin(), t.cos(), zero);
+        let c2 = Vec4::new(zero, t.cos(), t.sin(), zero);
+        let c3 = Vec4::new(zero, -t.sin(), t.cos(), zero);
         let c4 = Vec4::new(zero, zero, zero, one);
         let rot = Mat4x4 { c1, c2, c3, c4 };
         *self = self.clone() * rot;
@@ -114,9 +89,9 @@ impl<T: Float> Mat4x4<T> {
     pub fn rotate_y(&mut self, t: T) {
         let zero = T::zero();
         let one = T::one();
-        let c1 = Vec4::new(t.cos(), zero, t.sin(), zero);
+        let c1 = Vec4::new(t.cos(), zero, -t.sin(), zero);
         let c2 = Vec4::new(zero, one, zero, zero);
-        let c3 = Vec4::new(-t.sin(), zero, t.cos(), zero);
+        let c3 = Vec4::new(t.sin(), zero, t.cos(), zero);
         let c4 = Vec4::new(zero, zero, zero, one);
         let rot = Mat4x4 { c1, c2, c3, c4 };
         *self = self.clone() * rot;
@@ -149,15 +124,16 @@ impl<T: Float> Mat4x4<T> {
         Mat4x4 { c1, c2, c3, c4 }
     }
 
-    pub fn perspective(fov_y: T, aspect: T, near: T, far: T) -> Self {
+    pub fn perspective(fovy: T, aspect: T, near: T, far: T) -> Self {
+        let zero = T::zero();
         let one = T::one();
         let two = one + one;
-        let t = near * T::tan((fov_y / two).to_radians());
-        let b = -t;
-        let r = aspect * t;
-        let l = -r;
-
-        Self::frustum(l, r, b, t, near, far)
+        let f = one / (fovy / two).tan();
+        let c1 = Vec4::new(f / aspect, zero, zero, zero);
+        let c2 = Vec4::new(zero, f, zero, zero);
+        let c3 = Vec4::new(zero, zero, (far + near) / (near - far), -one);
+        let c4 = Vec4::new(zero, zero, (two * far * near) / (near - far), zero);
+        Mat4x4 { c1, c2, c3, c4 }
     }
 
     pub fn ortho(l: T, r: T, b: T, t: T, n: T, f: T) -> Self {
@@ -179,15 +155,17 @@ impl<T: Float> Mat4x4<T> {
     pub fn look_at(eye: Vec3<T>, center: Vec3<T>, up: Vec3<T>) -> Self {
         let zero = T::zero();
         let one = T::one();
-        let z = (eye.clone() - center).normalize();
-        let x = up.cross(&z);
-        let y = z.cross(&x).normalize();
-        let x = x.normalize();
-        let c1 = Vec4::new(x.x, x.y, x.z, -x.dot(&eye));
-        let c2 = Vec4::new(y.x, y.y, y.z, -y.dot(&eye));
-        let c3 = Vec4::new(z.x, z.y, z.y, -z.dot(&eye));
+        let f = (center - eye.clone()).normalize();
+        let up = up.normalize();
+        let s = f.cross(&up);
+        let u = s.normalize().cross(&f);
+        let c1 = Vec4::new(s.x, u.x, -f.x, zero);
+        let c2 = Vec4::new(s.y, u.y, -f.y, zero);
+        let c3 = Vec4::new(s.z, u.z, -f.z, zero);
         let c4 = Vec4::new(zero, zero, zero, one);
-        Mat4x4 { c1, c2, c3, c4 }
+        let mut m = Mat4x4 { c1, c2, c3, c4 };
+        m.translate(-eye.x, -eye.y, -eye.z);
+        m
     }
 }
 

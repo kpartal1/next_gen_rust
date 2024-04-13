@@ -2,6 +2,7 @@
 use crate::{linalg::vec2::Vec2, Color};
 use std::ops::{Deref, DerefMut, Index, IndexMut};
 
+#[derive(Debug)]
 pub struct Canvas {
     buf: Vec<u32>,
     width: usize,
