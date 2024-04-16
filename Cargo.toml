@@ -9,3 +9,5 @@ edition = "2021"
 minifb = "0.25.0"
 num = "0.4.1"
 rand = "0.8.5"
+
+[workspace]
