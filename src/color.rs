@@ -1,24 +1,23 @@
-#![allow(unused)]
-
-use std::ops::{Deref, DerefMut};
-
-use rand::Rng;
-
-pub struct Color;
+#[allow(unused)]
+#[derive(Clone, Copy)]
+pub struct Color {
+    pub r: u8,
+    pub g: u8,
+    pub b: u8,
+}
 
 impl Color {
-    pub const BLACK: u32 = 0;
-    pub const WHITE: u32 = 16777215;
-    pub const GREEN: u32 = 65280;
-    pub const RED: u32 = 16711680;
-    pub const BLUE: u32 = 255;
+    pub const BLACK: Color = Color { r: 0, g: 0, b: 0 };
+    pub const WHITE: Color = Color { r: 255, g: 255, b: 255 };
+    pub const RED: Color = Color { r: 255, g: 0, b: 0 };
+    pub const GREEN: Color = Color { r: 0, g: 255, b: 0 };
+    pub const BLUE: Color = Color { r: 0, g: 0, b: 255 };
 
-    pub fn from_u8_rgb(r: u8, g: u8, b: u8) -> u32 {
-        let (r, g, b) = (r as u32, g as u32, b as u32);
-        (r << 16) | (g << 8) | b
+    pub fn new(r: u8, g: u8, b: u8) -> Color {
+        Color { r, g, b }
     }
 
-    pub fn random() -> u32 {
-        rand::random()
+    pub fn to_u32(&self) -> u32 {
+        (self.r as u32) << 16 | (self.g as u32) << 8 | (self.b as u32)
     }
 }
