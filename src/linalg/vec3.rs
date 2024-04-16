@@ -1,14 +1,13 @@
 #![allow(unused)]
 
 use std::ops::{Add, Mul, Sub};
-
 use num::{Float, Num};
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug)]
 pub struct Vec3<T> {
-    x: T,
-    y: T,
-    z: T,
+    pub x: T,
+    pub y: T,
+    pub z: T,
 }
 
 impl<T> Vec3<T> {
@@ -25,25 +24,13 @@ impl<T: Clone> Vec3<T> {
             z: f,
         }
     }
-
-    pub fn x(&self) -> T {
-        self.x.clone()
-    }
-
-    pub fn y(&self) -> T {
-        self.y.clone()
-    }
-
-    pub fn z(&self) -> T {
-        self.z.clone()
-    }
 }
 
 impl<T: Clone + Num> Vec3<T> {
     pub fn dot(&self, rhs: &Self) -> T {
-        self.x.clone() * rhs.x.clone()
-            + self.y.clone() * rhs.y.clone()
-            + self.z.clone() * rhs.z.clone()
+        self.x.clone() * rhs.x.clone() +
+        self.y.clone() * rhs.y.clone() +
+        self.z.clone() * rhs.z.clone()
     }
 
     pub fn cross(&self, rhs: &Self) -> Self {
@@ -74,7 +61,7 @@ impl<T: Float> Vec3<T> {
     }
 
     pub fn angle(&self, rhs: &Self) -> T {
-        (self.dot(rhs) / self.magnitude() * rhs.magnitude()).acos()
+        (self.dot(rhs) / (self.magnitude() * rhs.magnitude())).acos()
     }
 }
 
