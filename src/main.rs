@@ -25,7 +25,8 @@ fn main() {
     let mut wireframe = WireFrameRenderer::new(WIDTH, HEIGHT);
     let monkey = File::open("src/resources/monkey.obj").unwrap();
     let monkey: Obj<TexturedVertex, usize> = obj::load_obj(BufReader::new(monkey)).unwrap();
-    let monkey = WireFrameModel::from(monkey);
+    let mut monkey = WireFrameModel::from(monkey);
+    monkey.model_mat().scale(110., 80., 80.);
     wireframe.add_model(monkey);
     wireframe.render();
     // let monkey2 = File::open("src/resources/monkey.obj").unwrap();

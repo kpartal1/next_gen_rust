@@ -1,11 +1,29 @@
 use obj::{Obj, TexturedVertex};
 
-use crate::{linalg::matrix::Mat4x4, tri::Tri};
+use crate::{draw::Draw, linalg::matrix::Mat4x4, tri::Tri};
 
 pub struct WireFrameModel {
     name: Option<String>,
     tris: Vec<Tri>,
     mat: Mat4x4<f32>,
+}
+
+impl WireFrameModel {
+    pub fn model_mat(&mut self) -> &mut Mat4x4<f32> {
+        &mut self.mat
+    }
+
+    pub fn tris(&mut self) -> &mut Vec<Tri> {
+        &mut self.tris
+    }
+}
+
+impl Draw for WireFrameModel {
+    fn draw(&self, canvas: &mut crate::canvas::Canvas) {
+        for tri in &self.tris {
+            tri.draw(canvas);
+        }
+    }
 }
 
 impl From<Obj<TexturedVertex, usize>> for WireFrameModel {

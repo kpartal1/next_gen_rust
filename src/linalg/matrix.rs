@@ -223,6 +223,16 @@ impl<T: Clone + Num> Div<T> for Mat4x4<T> {
     }
 }
 
+impl<T: Clone + Num> Mul<Vec3<T>> for Mat4x4<T> {
+    type Output = Vec4<T>;
+    fn mul(self, rhs: Vec3<T>) -> Self::Output {
+        let one = T::one();
+        let rhs = Vec4::new(rhs.x, rhs.y, rhs.z, one);
+        let [r1, r2, r3, r4] = self.rows();
+        Vec4::new(r1.dot(&rhs), r2.dot(&rhs), r3.dot(&rhs), r4.dot(&rhs))
+    }
+}
+
 impl<T: Clone + Num> Mul<Vec4<T>> for Mat4x4<T> {
     type Output = Vec4<T>;
     fn mul(self, rhs: Vec4<T>) -> Self::Output {
