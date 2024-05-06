@@ -183,7 +183,6 @@ impl Canvas {
             scan_y -= 1;
         }
     }
-
     pub fn tri(
         &mut self,
         (mut x0, mut y0): (i32, i32),

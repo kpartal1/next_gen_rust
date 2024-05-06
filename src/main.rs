@@ -10,12 +10,26 @@ mod texturedtri;
 mod tri;
 mod wireframemodel;
 
+mod buffer;
+mod canvas2;
+
+use std::f32::consts::{PI, SQRT_2};
+
+use canvas2::Canvas2;
+use canvas::Canvas;
+use color::Color;
+use linalg::vec2::Vec2;
+use linalg::{matrix::Mat4x4, vec4::Vec4};
+use minifb::{Key, Window, WindowOptions};
+use num::integer::sqrt;
+use num::traits::real::Real;
+use num::{abs, pow, Float};
+use rand::Rng;
+
 use std::{fs::File, io::BufReader};
 
 use std::env;
 
-use canvas::Canvas;
-use color::Color;
 use obj::{Obj, TexturedVertex};
 use renderer::Renderer;
 use renderers::wireframe::WireFrameRenderer;
@@ -29,7 +43,12 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let query = &args[1];
 
-    let mut canvas = Canvas::new(WIDTH, HEIGHT);
+    // Limit to max ~60 fps update rate
+
+    let mut rng = rand::thread_rng();
+
+    if query == "og" {
+        let mut canvas = Canvas2::new(WIDTH, HEIGHT);
 
     let mut window = Window::new(
         "Test - ESC to exit",
@@ -43,14 +62,9 @@ fn main() {
     .unwrap_or_else(|e| {
         panic!("{}", e);
     });
-
-    // Limit to max ~60 fps update rate
     window.limit_update_rate(Some(std::time::Duration::from_micros(16600)));
-
-    let mut rng = rand::thread_rng();
-
-    if query == "og" {
         while window.is_open() && !window.is_key_down(Key::Escape) {
+            
             canvas.clear();
             canvas.set_color(Color::random());
             let x1 = rng.gen_range(-1f32..1. + f32::EPSILON);
@@ -68,7 +82,7 @@ fn main() {
                 .update_with_buffer(canvas.buffer(), WIDTH, HEIGHT)
                 .unwrap();
         }
-    } else if query = "kon" {
+    } else if query == "kon" {
       let mut wireframe = WireFrameRenderer::new(WIDTH, HEIGHT);
     let monkey = File::open("src/resources/monkey.obj").unwrap();
     let monkey: Obj<TexturedVertex, usize> = obj::load_obj(BufReader::new(monkey)).unwrap();
