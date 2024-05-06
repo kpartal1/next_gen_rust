@@ -12,6 +12,9 @@ mod wireframemodel;
 
 use std::{fs::File, io::BufReader};
 
+use std::env;
+
+use canvas::Canvas;
 use color::Color;
 use obj::{Obj, TexturedVertex};
 use renderer::Renderer;
@@ -22,7 +25,51 @@ const WIDTH: usize = 640;
 const HEIGHT: usize = 360;
 
 fn main() {
-    let mut wireframe = WireFrameRenderer::new(WIDTH, HEIGHT);
+
+    let args: Vec<String> = env::args().collect();
+    let query = &args[1];
+
+    let mut canvas = Canvas::new(WIDTH, HEIGHT);
+
+    let mut window = Window::new(
+        "Test - ESC to exit",
+        WIDTH,
+        HEIGHT,
+        WindowOptions {
+            resize: true,
+            ..Default::default()
+        },
+    )
+    .unwrap_or_else(|e| {
+        panic!("{}", e);
+    });
+
+    // Limit to max ~60 fps update rate
+    window.limit_update_rate(Some(std::time::Duration::from_micros(16600)));
+
+    let mut rng = rand::thread_rng();
+
+    if query == "og" {
+        while window.is_open() && !window.is_key_down(Key::Escape) {
+            canvas.clear();
+            canvas.set_color(Color::random());
+            let x1 = rng.gen_range(-1f32..1. + f32::EPSILON);
+            let y1 = rng.gen_range(-1f32..1. + f32::EPSILON);
+            let x2 = rng.gen_range(-1f32..1. + f32::EPSILON);
+            let y2 = rng.gen_range(-1f32..1. + f32::EPSILON);
+            let x3 = rng.gen_range(-1f32..1. + f32::EPSILON);
+            let y3 = rng.gen_range(-1f32..1. + f32::EPSILON);
+            // let (x1, y1) = (&mvp * Vec4::from(0., 0.5, 0., 0.)).xy();
+            // let (x2, y2) = (&mvp * Vec4::from(-0.5, -0.5, 0., 0.)).xy();
+            // let (x3, y3) = (&mvp * Vec4::from(0.5, -0.5, 0., 0.)).xy();
+            canvas.tri((x1, y1), (x2, y2), (x3, y3));
+
+            window
+                .update_with_buffer(canvas.buffer(), WIDTH, HEIGHT)
+                .unwrap();
+        }
+    } else if query = "kon" {
+      let mut wireframe = WireFrameRenderer::new(WIDTH, HEIGHT);
     let monkey = File::open("src/resources/monkey.obj").unwrap();
     let monkey: Obj<TexturedVertex, usize> = obj::load_obj(BufReader::new(monkey)).unwrap();
     let mut monkey = WireFrameModel::from(monkey);
@@ -34,8 +81,7 @@ fn main() {
     // let monkey3 = File::open("src/resources/monkey.obj").unwrap();
     // let monkey3: Obj<TexturedVertex, usize> = obj::load_obj(BufReader::new(monkey3)).unwrap();
     // println!("{monkey:?}");
-
-    // let mut model = Mat4x4::identity();
+      // let mut model = Mat4x4::identity();
     // model.scale(60., 40., 40.);
     // // let mut model2 = Mat4x4::identity();
     // // model2.scale(40., 40., 40.);
@@ -59,8 +105,7 @@ fn main() {
     // //     mvp2.clone() * Vec4::from(monkey2.vertices[0].position)
     // // );
     // // let mut mvp3 = projection * view * model3;
-
-    // let angle = 0.045;
+      // let angle = 0.045;
     // // let angle2 = 0.1;
     // // let angle3 = 0.01;
     // // mvp.scale(40., 40., 1.);
@@ -150,4 +195,5 @@ fn main() {
     //         .update_with_buffer(canvas.buffer(), WIDTH, HEIGHT)
     //         .unwrap();
     // }
+  }
 }
