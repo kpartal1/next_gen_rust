@@ -6,8 +6,8 @@ use num::{Float, Num};
 
 #[derive(Clone, Debug)]
 pub struct Vec2<T> {
-    x: T,
-    y: T,
+    pub x: T,
+    pub y: T,
 }
 
 impl<T> Vec2<T> {

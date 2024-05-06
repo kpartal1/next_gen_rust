@@ -1,15 +1,17 @@
 #![allow(unused)]
 
-use std::ops::{Add, Mul, Sub};
+use std::ops::{Add, Div, Mul, Sub};
 
 use num::{Float, Num};
 
+use super::vec3::Vec3;
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct Vec4<T> {
-    x: T,
-    y: T,
-    z: T,
-    w: T,
+    pub x: T,
+    pub y: T,
+    pub z: T,
+    pub w: T,
 }
 
 impl<T> Vec4<T> {
@@ -28,20 +30,12 @@ impl<T: Clone> Vec4<T> {
         }
     }
 
-    pub fn x(&self) -> T {
-        self.x.clone()
+    pub fn xy(&self) -> (T, T) {
+        (self.x.clone(), self.y.clone())
     }
 
-    pub fn y(&self) -> T {
-        self.y.clone()
-    }
-
-    pub fn z(&self) -> T {
-        self.z.clone()
-    }
-
-    pub fn w(&self) -> T {
-        self.w.clone()
+    pub fn xyz(&self) -> Vec3<T> {
+        Vec3::new(self.x.clone(), self.y.clone(), self.z.clone())
     }
 }
 
@@ -78,6 +72,15 @@ impl<T: Float> Vec4<T> {
     }
 }
 
+impl<T: Num> From<[T; 3]> for Vec4<T> {
+    fn from(values: [T; 3]) -> Self {
+        let [x, y, z] = values;
+        // let zero = T::zero();
+        let one = T::one();
+        Vec4::new(x, y, z, one)
+    }
+}
+
 impl<T: Default> Default for Vec4<T> {
     fn default() -> Self {
         Self::new(
@@ -97,6 +100,18 @@ impl<T: Clone + Mul<Output = T>> Mul<T> for Vec4<T> {
             self.y * rhs.clone(),
             self.z * rhs.clone(),
             self.w * rhs,
+        )
+    }
+}
+
+impl<T: Clone + Div<Output = T>> Div<T> for Vec4<T> {
+    type Output = Self;
+    fn div(self, rhs: T) -> Self::Output {
+        Vec4::new(
+            self.x / rhs.clone(),
+            self.y / rhs.clone(),
+            self.z / rhs.clone(),
+            self.w / rhs,
         )
     }
 }
