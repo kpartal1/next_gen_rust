@@ -3,6 +3,8 @@ mod canvas;
 mod color;
 mod linalg;
 
+use std::env;
+
 use canvas::Canvas;
 use color::Color;
 use linalg::vec2::Vec2;
@@ -14,6 +16,10 @@ const WIDTH: usize = 640;
 const HEIGHT: usize = 360;
 
 fn main() {
+
+    let args: Vec<String> = env::args().collect();
+    let query = &args[1];
+
     let mut canvas = Canvas::new(WIDTH, HEIGHT);
 
     let mut window = Window::new(
@@ -43,22 +49,25 @@ fn main() {
     // let mvp = projection * view * model;
 
     let mut rng = rand::thread_rng();
-    while window.is_open() && !window.is_key_down(Key::Escape) {
-        canvas.clear();
-        canvas.set_color(Color::random());
-        let x1 = rng.gen_range(-1f32..1. + f32::EPSILON);
-        let y1 = rng.gen_range(-1f32..1. + f32::EPSILON);
-        let x2 = rng.gen_range(-1f32..1. + f32::EPSILON);
-        let y2 = rng.gen_range(-1f32..1. + f32::EPSILON);
-        let x3 = rng.gen_range(-1f32..1. + f32::EPSILON);
-        let y3 = rng.gen_range(-1f32..1. + f32::EPSILON);
-        // let (x1, y1) = (&mvp * Vec4::from(0., 0.5, 0., 0.)).xy();
-        // let (x2, y2) = (&mvp * Vec4::from(-0.5, -0.5, 0., 0.)).xy();
-        // let (x3, y3) = (&mvp * Vec4::from(0.5, -0.5, 0., 0.)).xy();
-        canvas.tri((x1, y1), (x2, y2), (x3, y3));
 
-        window
-            .update_with_buffer(canvas.buffer(), WIDTH, HEIGHT)
-            .unwrap();
+    if query == "og" {
+        while window.is_open() && !window.is_key_down(Key::Escape) {
+            canvas.clear();
+            canvas.set_color(Color::random());
+            let x1 = rng.gen_range(-1f32..1. + f32::EPSILON);
+            let y1 = rng.gen_range(-1f32..1. + f32::EPSILON);
+            let x2 = rng.gen_range(-1f32..1. + f32::EPSILON);
+            let y2 = rng.gen_range(-1f32..1. + f32::EPSILON);
+            let x3 = rng.gen_range(-1f32..1. + f32::EPSILON);
+            let y3 = rng.gen_range(-1f32..1. + f32::EPSILON);
+            // let (x1, y1) = (&mvp * Vec4::from(0., 0.5, 0., 0.)).xy();
+            // let (x2, y2) = (&mvp * Vec4::from(-0.5, -0.5, 0., 0.)).xy();
+            // let (x3, y3) = (&mvp * Vec4::from(0.5, -0.5, 0., 0.)).xy();
+            canvas.tri((x1, y1), (x2, y2), (x3, y3));
+
+            window
+                .update_with_buffer(canvas.buffer(), WIDTH, HEIGHT)
+                .unwrap();
+        }
     }
 }
