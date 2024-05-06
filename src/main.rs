@@ -205,8 +205,8 @@ fn main() {
         show_cube(&Cube, &camera_pos, &mut canvas);
 
         // Cube = rotate_cube_x(Cube, &(spin_point[0], spin_point[1], spin_point[2]), rot_speed);
-        // Cube = rotate_cube_y(Cube, &(spin_point[0], spin_point[1], spin_point[2]), rot_speed);
-        // Cube = rotate_cube_z(Cube, &(spin_point[0], spin_point[1], spin_point[2]), rot_speed);
+        Cube = rotate_cube_y(Cube, &(spin_point[0], spin_point[1], spin_point[2]), rot_speed);
+        Cube = rotate_cube_z(Cube, &(spin_point[0], spin_point[1], spin_point[2]), rot_speed);
 
         face.0 = rotate_y(face.0, &(spin_point[0], spin_point[1], spin_point[2]), rot_speed);
         face.1 = rotate_y(face.1, &(spin_point[0], spin_point[1], spin_point[2]), rot_speed);
